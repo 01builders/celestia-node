@@ -4,6 +4,7 @@ import (
 	"context"
 	sdkmath "cosmossdk.io/math"
 	"encoding/json"
+	"github.com/celestiaorg/celestia-node/internal/comet"
 	"github.com/cosmos/cosmos-sdk/client"
 	"os"
 	"testing"
@@ -53,12 +54,15 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.Require().Greater(len(s.accounts), 0)
 	accountName := s.accounts[0].Name
 
-	accessor, err := NewCoreAccessor(s.cctx.Keyring, accountName, localHeader{s.cctx.Client}, nil, "", "")
+	coreConn, err := comet.NewCometGRPCConn(cfg.TmConfig.RPC.GRPCListenAddress)
+	require.NoError(s.T(), err)
+
+	accessor, err := NewCoreAccessor(s.cctx.Keyring, accountName, localHeader{s.cctx.Client}, coreConn, "", "")
 	require.NoError(s.T(), err)
 	ctx, cancel := context.WithCancel(context.Background())
 	accessor.ctx = ctx
 	accessor.cancel = cancel
-	setClients(accessor, s.cctx.GRPCClient)
+	setClients(accessor, coreConn)
 	s.accessor = accessor
 
 	// required to ensure the Head request is non-nil

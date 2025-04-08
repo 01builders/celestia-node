@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
+	"github.com/celestiaorg/celestia-node/internal/comet"
 	"maps"
 	"net"
 	"slices"
@@ -62,6 +63,10 @@ type Swamp struct {
 	nodes   map[*nodebuilder.Node]struct{}
 
 	genesis *header.ExtendedHeader
+
+	// cometGrpcConn is a reference to the separate gRPC connection used for comet which is
+	// distinct from the app gRPC connection which can be referenced by ClientContext.Client
+	cometGrpcConn *grpc.ClientConn
 }
 
 // NewSwamp creates a new instance of Swamp.
@@ -80,6 +85,10 @@ func NewSwamp(t *testing.T, options ...Option) *Swamp {
 	// instead we are assigning all created BNs to 1 Core from the swamp
 	ic.WithChainID("private")
 	cctx := core.StartTestNodeWithConfig(t, ic)
+
+	cometConn, err := comet.NewCometGRPCConn(ic.TmConfig.RPC.GRPCListenAddress)
+	require.NoError(t, err)
+
 	swp := &Swamp{
 		t:             t,
 		cfg:           ic,
@@ -87,6 +96,7 @@ func NewSwamp(t *testing.T, options ...Option) *Swamp {
 		ClientContext: cctx,
 		Accounts:      getAccounts(ic),
 		nodes:         map[*nodebuilder.Node]struct{}{},
+		cometGrpcConn: cometConn,
 	}
 
 	swp.t.Cleanup(swp.cleanup)
@@ -182,15 +192,7 @@ func (s *Swamp) setupGenesis() {
 	store, err := store.NewStore(store.DefaultParameters(), s.t.TempDir())
 	require.NoError(s.t, err)
 
-	host, port, err := net.SplitHostPort(s.ClientContext.GRPCClient.Target())
-	require.NoError(s.t, err)
-	addr := net.JoinHostPort(host, port)
-	con, err := grpc.NewClient(
-		addr,
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	)
-	require.NoError(s.t, err)
-	fetcher, err := core.NewBlockFetcher(con)
+	fetcher, err := core.NewBlockFetcher(s.cometGrpcConn)
 	require.NoError(s.t, err)
 
 	ex, err := core.NewExchange(
