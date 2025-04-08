@@ -57,13 +57,13 @@ func TestArchivalBlobSync(t *testing.T) {
 	sw := swamp.NewSwamp(t, swamp.WithBlockTime(btime))
 	fillDn := swamp.FillBlocks(ctx, sw.ClientContext, sw.Accounts[0], bsize, blocks)
 
-	archivalBN := sw.NewBridgeNode()
+	archivalBN := sw.NewBridgeNode(fx.Replace(sw.Fetcher()))
 	sw.SetBootstrapper(t, archivalBN)
 
 	err := archivalBN.Start(ctx)
 	require.NoError(t, err)
 
-	archivalFN := sw.NewFullNode()
+	archivalFN := sw.NewFullNode(fx.Replace(sw.Fetcher()))
 	err = archivalFN.Start(ctx)
 	require.NoError(t, err)
 
