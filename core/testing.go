@@ -3,24 +3,17 @@ package core
 import (
 	"context"
 	sdklog "cosmossdk.io/log"
-	"net"
 	"path/filepath"
 	"testing"
 	"time"
 
+	"github.com/celestiaorg/celestia-app/v4/test/util/genesis"
+	"github.com/celestiaorg/celestia-app/v4/test/util/testnode"
 	tmrand "github.com/cometbft/cometbft/libs/rand"
 	"github.com/cometbft/cometbft/node"
 	cmthttp "github.com/cometbft/cometbft/rpc/client/http"
 	srvtypes "github.com/cosmos/cosmos-sdk/server/types"
-	grpc_retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	"github.com/stretchr/testify/require"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/connectivity"
-	"google.golang.org/grpc/credentials/insecure"
-
-	"github.com/celestiaorg/celestia-app/v4/test/util/genesis"
-	"github.com/celestiaorg/celestia-app/v4/test/util/testnode"
 )
 
 const chainID = "private"
@@ -82,37 +75,6 @@ func generateRandomAccounts(n int) []string {
 		accounts[i] = tmrand.Str(9)
 	}
 	return accounts
-}
-
-func newTestClient(t *testing.T, ip, port string) *grpc.ClientConn {
-	t.Helper()
-
-	retryInterceptor := grpc_retry.UnaryClientInterceptor(
-		grpc_retry.WithMax(5),
-		grpc_retry.WithCodes(codes.Unavailable),
-		grpc_retry.WithBackoff(
-			grpc_retry.BackoffExponentialWithJitter(time.Second, 2.0)),
-	)
-	retryStreamInterceptor := grpc_retry.StreamClientInterceptor(
-		grpc_retry.WithMax(5),
-		grpc_retry.WithCodes(codes.Unavailable),
-		grpc_retry.WithBackoff(
-			grpc_retry.BackoffExponentialWithJitter(time.Second, 2.0)),
-	)
-
-	opts := []grpc.DialOption{
-		grpc.WithUnaryInterceptor(retryInterceptor),
-		grpc.WithStreamInterceptor(retryStreamInterceptor),
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	}
-	endpoint := net.JoinHostPort(ip, port)
-	client, err := grpc.NewClient(endpoint, opts...)
-	require.NoError(t, err)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
-	t.Cleanup(cancel)
-	ready := client.WaitForStateChange(ctx, connectivity.Ready)
-	require.True(t, ready)
-	return client
 }
 
 // Network wraps `testnode.Context` allowing to manually stop all underlying connections.
