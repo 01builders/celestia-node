@@ -7,9 +7,11 @@ import (
 	"github.com/celestiaorg/celestia-node/internal/comet"
 	"github.com/cosmos/cosmos-sdk/client"
 	"os"
+	"strings"
 	"testing"
 
 	abci "github.com/cometbft/cometbft/abci/types"
+	tmhttp "github.com/cometbft/cometbft/rpc/client/http"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	tmservice "github.com/cosmos/cosmos-sdk/client/grpc/cmtservice"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -57,7 +59,10 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	coreConn, err := comet.NewCometGRPCConn(cfg.TmConfig.RPC.GRPCListenAddress)
 	require.NoError(s.T(), err)
 
-	accessor, err := NewCoreAccessor(s.cctx.Keyring, accountName, localHeader{s.cctx.Client}, coreConn, "", "")
+	client, err := tmhttp.New(strings.Replace(cfg.TmConfig.RPC.GRPCListenAddress, "tcp", "http", 1), "/websocket")
+	require.NoError(s.T(), err)
+
+	accessor, err := NewCoreAccessor(s.cctx.Keyring, accountName, localHeader{client}, coreConn, "", "")
 	require.NoError(s.T(), err)
 	ctx, cancel := context.WithCancel(context.Background())
 	accessor.ctx = ctx

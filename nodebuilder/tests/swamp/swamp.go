@@ -64,9 +64,8 @@ type Swamp struct {
 
 	genesis *header.ExtendedHeader
 
-	// cometGrpcConn is a reference to the separate gRPC connection used for comet which is
-	// distinct from the app gRPC connection which can be referenced by ClientContext.Client
-	cometGrpcConn *grpc.ClientConn
+	// Fetcher should be constructed with a gRPC connection using the comet GRPCListenAddress
+	fetcher *core.BlockFetcher
 }
 
 // NewSwamp creates a new instance of Swamp.
@@ -89,6 +88,9 @@ func NewSwamp(t *testing.T, options ...Option) *Swamp {
 	cometConn, err := comet.NewCometGRPCConn(ic.TmConfig.RPC.GRPCListenAddress)
 	require.NoError(t, err)
 
+	fetcher, err := core.NewBlockFetcher(cometConn)
+	require.NoError(t, err)
+
 	swp := &Swamp{
 		t:             t,
 		cfg:           ic,
@@ -96,12 +98,16 @@ func NewSwamp(t *testing.T, options ...Option) *Swamp {
 		ClientContext: cctx,
 		Accounts:      getAccounts(ic),
 		nodes:         map[*nodebuilder.Node]struct{}{},
-		cometGrpcConn: cometConn,
+		fetcher:       fetcher,
 	}
 
 	swp.t.Cleanup(swp.cleanup)
 	swp.setupGenesis()
 	return swp
+}
+
+func (s *Swamp) Fetcher() *core.BlockFetcher {
+	return s.fetcher
 }
 
 func getAccounts(config *testnode.Config) (accounts []string) {
@@ -129,9 +135,9 @@ func (s *Swamp) cleanup() {
 
 // GetCoreBlockHashByHeight returns a tendermint block's hash by provided height
 func (s *Swamp) GetCoreBlockHashByHeight(ctx context.Context, height int64) libhead.Hash {
-	b, err := s.ClientContext.Client.Block(ctx, &height)
+	c, _, err := s.fetcher.GetBlockInfo(ctx, height)
 	require.NoError(s.t, err)
-	return libhead.Hash(b.BlockID.Hash)
+	return libhead.Hash(c.BlockID.Hash)
 }
 
 // WaitTillHeight holds the test execution until the given amount of blocks
@@ -148,7 +154,7 @@ func (s *Swamp) WaitTillHeight(ctx context.Context, height int64) libhead.Hash {
 			latest, err := s.ClientContext.LatestHeight()
 			require.NoError(s.t, err)
 			if latest >= height {
-				res, err := s.ClientContext.Client.Block(ctx, &latest)
+				res, _, err := s.fetcher.GetBlockInfo(ctx, latest)
 				require.NoError(s.t, err)
 				return libhead.Hash(res.BlockID.Hash)
 			}
@@ -192,11 +198,8 @@ func (s *Swamp) setupGenesis() {
 	store, err := store.NewStore(store.DefaultParameters(), s.t.TempDir())
 	require.NoError(s.t, err)
 
-	fetcher, err := core.NewBlockFetcher(s.cometGrpcConn)
-	require.NoError(s.t, err)
-
 	ex, err := core.NewExchange(
-		fetcher,
+		s.fetcher,
 		store,
 		header.MakeExtendedHeader,
 	)
@@ -297,7 +300,7 @@ func (s *Swamp) NewNodeWithStore(
 
 	switch tp {
 	case node.Bridge:
-		host, port, err := net.SplitHostPort(s.ClientContext.GRPCClient.Target())
+		host, port, err := net.SplitHostPort(s.ClientContext.GRPCClient.Target()) // TODO(chatton) should this be comet address or app address?
 		if err != nil {
 			return nil, err
 		}
