@@ -3,7 +3,6 @@ package core
 import (
 	"context"
 	"fmt"
-	"github.com/celestiaorg/celestia-node/internal/comet"
 	"testing"
 
 	"github.com/cometbft/cometbft/libs/rand"
@@ -14,6 +13,7 @@ import (
 
 	"github.com/celestiaorg/celestia-node/header"
 	"github.com/celestiaorg/celestia-node/header/headertest"
+	"github.com/celestiaorg/celestia-node/internal/comet"
 	"github.com/celestiaorg/celestia-node/share"
 )
 
