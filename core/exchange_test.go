@@ -3,7 +3,7 @@ package core
 import (
 	"bytes"
 	"context"
-	"github.com/celestiaorg/celestia-node/internal/comet"
+	"github.com/celestiaorg/celestia-node/internal/core"
 	"testing"
 	"time"
 
@@ -181,7 +181,7 @@ func createCoreFetcher(t *testing.T, cfg *testnode.Config) (*BlockFetcher, testn
 	_, err := cctx.WaitForHeightWithTimeout(2, time.Second*2) // TODO @renaynay: configure?
 	require.NoError(t, err)
 
-	client, err := comet.NewCometGRPCConn(cfg.TmConfig.RPC.GRPCListenAddress)
+	client, err := core.NewGRPCConn(cfg.TmConfig.RPC.GRPCListenAddress)
 	require.NoError(t, err)
 
 	fetcher, err := NewBlockFetcher(client)

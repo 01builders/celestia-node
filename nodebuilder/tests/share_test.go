@@ -34,7 +34,7 @@ func TestShareModule(t *testing.T) {
 	nodeBlob, err := blob.ToNodeBlobs(libBlob[0])
 	require.NoError(t, err)
 
-	bridge := sw.NewBridgeNode(fx.Replace(sw.Fetcher()))
+	bridge := sw.NewBridgeNode(fx.Replace(sw.BlockFetcher()))
 	require.NoError(t, bridge.Start(ctx))
 	addrs, err := peer.AddrInfoToP2pAddrs(host.InfoFromHost(bridge.Host))
 	require.NoError(t, err)

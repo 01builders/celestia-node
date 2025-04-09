@@ -4,7 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
-	"github.com/celestiaorg/celestia-node/internal/comet"
+	"github.com/celestiaorg/celestia-node/internal/core"
 	"maps"
 	"net"
 	"slices"
@@ -64,8 +64,8 @@ type Swamp struct {
 
 	genesis *header.ExtendedHeader
 
-	// Fetcher should be constructed with a gRPC connection using the comet GRPCListenAddress
-	fetcher *core.BlockFetcher
+	// BlockFetcher should be constructed with a gRPC connection using the comet GRPCListenAddress
+	blockFetcher *core.BlockFetcher
 }
 
 // NewSwamp creates a new instance of Swamp.
@@ -85,7 +85,7 @@ func NewSwamp(t *testing.T, options ...Option) *Swamp {
 	ic.WithChainID("private")
 	cctx := core.StartTestNodeWithConfig(t, ic)
 
-	cometConn, err := comet.NewCometGRPCConn(ic.TmConfig.RPC.GRPCListenAddress)
+	cometConn, err := core.NewGRPCConn(ic.TmConfig.RPC.GRPCListenAddress)
 	require.NoError(t, err)
 
 	fetcher, err := core.NewBlockFetcher(cometConn)
@@ -98,7 +98,7 @@ func NewSwamp(t *testing.T, options ...Option) *Swamp {
 		ClientContext: cctx,
 		Accounts:      getAccounts(ic),
 		nodes:         map[*nodebuilder.Node]struct{}{},
-		fetcher:       fetcher,
+		blockFetcher:  fetcher,
 	}
 
 	swp.t.Cleanup(swp.cleanup)
@@ -106,8 +106,8 @@ func NewSwamp(t *testing.T, options ...Option) *Swamp {
 	return swp
 }
 
-func (s *Swamp) Fetcher() *core.BlockFetcher {
-	return s.fetcher
+func (s *Swamp) BlockFetcher() *core.BlockFetcher {
+	return s.blockFetcher
 }
 
 func getAccounts(config *testnode.Config) (accounts []string) {
@@ -135,7 +135,7 @@ func (s *Swamp) cleanup() {
 
 // GetCoreBlockHashByHeight returns a tendermint block's hash by provided height
 func (s *Swamp) GetCoreBlockHashByHeight(ctx context.Context, height int64) libhead.Hash {
-	c, _, err := s.fetcher.GetBlockInfo(ctx, height)
+	c, _, err := s.blockFetcher.GetBlockInfo(ctx, height)
 	require.NoError(s.t, err)
 	return libhead.Hash(c.BlockID.Hash)
 }
@@ -154,7 +154,7 @@ func (s *Swamp) WaitTillHeight(ctx context.Context, height int64) libhead.Hash {
 			latest, err := s.ClientContext.LatestHeight()
 			require.NoError(s.t, err)
 			if latest >= height {
-				res, _, err := s.fetcher.GetBlockInfo(ctx, latest)
+				res, _, err := s.blockFetcher.GetBlockInfo(ctx, latest)
 				require.NoError(s.t, err)
 				return libhead.Hash(res.BlockID.Hash)
 			}
@@ -199,7 +199,7 @@ func (s *Swamp) setupGenesis() {
 	require.NoError(s.t, err)
 
 	ex, err := core.NewExchange(
-		s.fetcher,
+		s.blockFetcher,
 		store,
 		header.MakeExtendedHeader,
 	)

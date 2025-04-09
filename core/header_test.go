@@ -13,7 +13,7 @@ import (
 
 	"github.com/celestiaorg/celestia-node/header"
 	"github.com/celestiaorg/celestia-node/header/headertest"
-	"github.com/celestiaorg/celestia-node/internal/comet"
+	"github.com/celestiaorg/celestia-node/internal/core"
 	"github.com/celestiaorg/celestia-node/share"
 )
 
@@ -24,7 +24,7 @@ func TestMakeExtendedHeaderForEmptyBlock(t *testing.T) {
 	cfg := DefaultTestConfig()
 	StartTestNodeWithConfig(t, cfg)
 
-	client, err := comet.NewCometGRPCConn(cfg.TmConfig.RPC.GRPCListenAddress)
+	client, err := core.NewGRPCConn(cfg.TmConfig.RPC.GRPCListenAddress)
 
 	require.NoError(t, err)
 	fetcher, err := NewBlockFetcher(client)

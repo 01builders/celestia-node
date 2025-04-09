@@ -49,7 +49,7 @@ func TestFullReconstructFromBridge(t *testing.T) {
 	sw := swamp.NewSwamp(t, swamp.WithBlockTime(btime))
 	fillDn := swamp.FillBlocks(ctx, sw.ClientContext, sw.Accounts[0], bsize, blocks)
 
-	bridge := sw.NewBridgeNode(fx.Replace(sw.Fetcher()))
+	bridge := sw.NewBridgeNode(fx.Replace(sw.BlockFetcher()))
 	err := bridge.Start(ctx)
 	require.NoError(t, err)
 	bridgeClient := getAdminClient(ctx, bridge, t)
@@ -108,7 +108,7 @@ func TestFullReconstructFromFulls(t *testing.T) {
 	fillDn := swamp.FillBlocks(ctx, sw.ClientContext, sw.Accounts[0], bsize, blocks)
 
 	const defaultTimeInterval = time.Second * 5
-	bridge := sw.NewBridgeNode(fx.Replace(sw.Fetcher()))
+	bridge := sw.NewBridgeNode(fx.Replace(sw.BlockFetcher()))
 
 	sw.SetBootstrapper(t, bridge)
 	require.NoError(t, bridge.Start(ctx))
@@ -283,7 +283,7 @@ func TestFullReconstructFromLights(t *testing.T) {
 	cfg := nodebuilder.DefaultConfig(node.Full)
 	setTimeInterval(cfg, defaultTimeInterval)
 
-	bridge := sw.NewBridgeNode(fx.Replace(sw.Fetcher()))
+	bridge := sw.NewBridgeNode(fx.Replace(sw.BlockFetcher()))
 	addrsBridge, err := peer.AddrInfoToP2pAddrs(host.InfoFromHost(bridge.Host))
 	require.NoError(t, err)
 

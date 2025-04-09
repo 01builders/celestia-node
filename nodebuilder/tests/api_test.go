@@ -38,7 +38,7 @@ func TestNodeModule(t *testing.T) {
 
 	sw := swamp.NewSwamp(t, swamp.WithBlockTime(time.Second))
 	// start a bridge node
-	bridge := sw.NewBridgeNode(fx.Replace(sw.Fetcher()))
+	bridge := sw.NewBridgeNode(fx.Replace(sw.BlockFetcher()))
 	err := bridge.Start(ctx)
 	require.NoError(t, err)
 
@@ -79,7 +79,7 @@ func TestGetByHeight(t *testing.T) {
 	sw := swamp.NewSwamp(t, swamp.WithBlockTime(time.Second))
 
 	// start a bridge node
-	bridge := sw.NewBridgeNode(fx.Replace(sw.Fetcher()))
+	bridge := sw.NewBridgeNode(fx.Replace(sw.BlockFetcher()))
 	err := bridge.Start(ctx)
 	require.NoError(t, err)
 
@@ -108,7 +108,7 @@ func TestBlobRPC(t *testing.T) {
 	sw := swamp.NewSwamp(t, swamp.WithBlockTime(btime))
 
 	// start a bridge node
-	bridge := sw.NewBridgeNode(fx.Replace(sw.Fetcher()))
+	bridge := sw.NewBridgeNode(fx.Replace(sw.BlockFetcher()))
 	err := bridge.Start(ctx)
 	require.NoError(t, err)
 
@@ -148,7 +148,7 @@ func TestHeaderSubscription(t *testing.T) {
 	sw := swamp.NewSwamp(t, swamp.WithBlockTime(btime))
 
 	// start a bridge node
-	bridge := sw.NewBridgeNode(fx.Replace(sw.Fetcher()))
+	bridge := sw.NewBridgeNode(fx.Replace(sw.BlockFetcher()))
 	err := bridge.Start(ctx)
 	require.NoError(t, err)
 
@@ -190,7 +190,7 @@ func TestSubmitBlobOverHTTP(t *testing.T) {
 
 	sw := swamp.NewSwamp(t, swamp.WithBlockTime(time.Second))
 	// start a bridge node
-	bridge := sw.NewBridgeNode(fx.Replace(sw.Fetcher()))
+	bridge := sw.NewBridgeNode(fx.Replace(sw.BlockFetcher()))
 	err := bridge.Start(ctx)
 	require.NoError(t, err)
 

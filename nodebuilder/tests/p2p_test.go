@@ -42,8 +42,8 @@ func TestBridgeNodeAsBootstrapper(t *testing.T) {
 
 	addr := host.InfoFromHost(bridge.Host)
 
-	full := sw.NewFullNode(nodebuilder.WithBootstrappers([]peer.AddrInfo{*addr}), fx.Replace(sw.Fetcher()))
-	light := sw.NewLightNode(nodebuilder.WithBootstrappers([]peer.AddrInfo{*addr}), fx.Replace(sw.Fetcher()))
+	full := sw.NewFullNode(nodebuilder.WithBootstrappers([]peer.AddrInfo{*addr}), fx.Replace(sw.BlockFetcher()))
+	light := sw.NewLightNode(nodebuilder.WithBootstrappers([]peer.AddrInfo{*addr}), fx.Replace(sw.BlockFetcher()))
 
 	for _, nd := range []*nodebuilder.Node{full, light} {
 		// start node and ensure that BN is correctly set as bootstrapper

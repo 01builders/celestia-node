@@ -120,6 +120,7 @@ func NewCoreAccessor(
 func (ca *CoreAccessor) Start(ctx context.Context) error {
 	ca.ctx, ca.cancel = context.WithCancel(context.Background())
 	// create the staking query client
+	// TODO(chatton): the tests seem to pass with either ca.appConn or ca.coreConn, which should be used?
 	ca.stakingCli = stakingtypes.NewQueryClient(ca.appConn)
 	ca.feeGrantCli = feegrant.NewQueryClient(ca.appConn)
 	// create ABCI query client
