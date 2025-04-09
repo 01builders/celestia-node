@@ -4,7 +4,7 @@ import (
 	"context"
 	sdkmath "cosmossdk.io/math"
 	"encoding/json"
-	"github.com/celestiaorg/celestia-node/internal/core"
+	"github.com/celestiaorg/celestia-node/internal"
 	"github.com/cosmos/cosmos-sdk/client"
 	"os"
 	"testing"
@@ -54,7 +54,7 @@ func (s *IntegrationTestSuite) SetupSuite() {
 	s.Require().Greater(len(s.accounts), 0)
 	accountName := s.accounts[0].Name
 
-	coreConn, err := core.NewGRPCConn(cfg.TmConfig.RPC.GRPCListenAddress)
+	coreConn, err := internal.NewCoreConn(cfg.TmConfig.RPC.GRPCListenAddress)
 	require.NoError(s.T(), err)
 
 	accessor, err := NewCoreAccessor(s.cctx.Keyring, accountName, localHeader{s.cctx.Client}, nil, "", "")

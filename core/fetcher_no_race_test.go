@@ -4,7 +4,7 @@ package core
 
 import (
 	"context"
-	"github.com/celestiaorg/celestia-node/internal/core"
+	"github.com/celestiaorg/celestia-node/internal"
 	"testing"
 	"time"
 
@@ -21,7 +21,7 @@ func TestBlockFetcherHeaderValues(t *testing.T) {
 
 	cfg := DefaultTestConfig()
 	StartTestNodeWithConfig(t, cfg)
-	client, err := core.NewGRPCConn(cfg.TmConfig.RPC.GRPCListenAddress)
+	client, err := internal.NewCoreConn(cfg.TmConfig.RPC.GRPCListenAddress)
 	require.NoError(t, err)
 	fetcher, err := NewBlockFetcher(client)
 	require.NoError(t, err)

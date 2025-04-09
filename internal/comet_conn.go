@@ -1,4 +1,4 @@
-package core
+package internal
 
 import (
 	"context"
@@ -12,8 +12,8 @@ import (
 	"time"
 )
 
-// NewGRPCConn creates a new gRPC client connection with retry interceptors and connectivity checks.
-func NewGRPCConn(endpoint string) (*grpc.ClientConn, error) {
+// NewCoreConn creates a new gRPC client connection with retry interceptors and connectivity checks.
+func NewCoreConn(endpoint string) (*grpc.ClientConn, error) {
 	retryInterceptor := grpc_retry.UnaryClientInterceptor(
 		grpc_retry.WithMax(5),
 		grpc_retry.WithCodes(codes.Unavailable),

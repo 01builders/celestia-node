@@ -4,7 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
-	"github.com/celestiaorg/celestia-node/internal/core"
+	"github.com/celestiaorg/celestia-node/internal"
 	"maps"
 	"net"
 	"slices"
@@ -85,7 +85,7 @@ func NewSwamp(t *testing.T, options ...Option) *Swamp {
 	ic.WithChainID("private")
 	cctx := core.StartTestNodeWithConfig(t, ic)
 
-	cometConn, err := core.NewGRPCConn(ic.TmConfig.RPC.GRPCListenAddress)
+	cometConn, err := internal.NewCoreConn(ic.TmConfig.RPC.GRPCListenAddress)
 	require.NoError(t, err)
 
 	fetcher, err := core.NewBlockFetcher(cometConn)
