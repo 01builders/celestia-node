@@ -387,7 +387,7 @@ require (
 
 replace (
 	cosmossdk.io/x/upgrade => github.com/celestiaorg/cosmos-sdk/x/upgrade v0.0.0-20250320145042-6d8b2a52fbb2
-	github.com/cometbft/cometbft => github.com/celestiaorg/celestia-core v1.53.0-tm-v0.38.17-rc1
+	github.com/cometbft/cometbft => github.com/celestiaorg/celestia-core v1.53.0-tm-v0.38.17-rc2
 	github.com/cosmos/cosmos-sdk => github.com/celestiaorg/cosmos-sdk v1.29.0-sdk-v0.50.12-rc0
 	github.com/filecoin-project/dagstore => github.com/celestiaorg/dagstore v0.0.0-20230824094345-537c012aa403
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1

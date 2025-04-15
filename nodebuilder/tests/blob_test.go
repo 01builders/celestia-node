@@ -35,14 +35,14 @@ func TestBlobModule(t *testing.T) {
 	blobs, err := blob.ToNodeBlobs(append(libBlobs0, libBlobs1...)...)
 	require.NoError(t, err)
 
-	bridge := sw.NewBridgeNode(fx.Replace(sw.BlockFetcher()))
+	bridge := sw.NewBridgeNode()
 	require.NoError(t, bridge.Start(ctx))
 	addrs, err := peer.AddrInfoToP2pAddrs(host.InfoFromHost(bridge.Host))
 	require.NoError(t, err)
 
 	fullCfg := sw.DefaultTestConfig(node.Full)
 	fullCfg.Header.TrustedPeers = append(fullCfg.Header.TrustedPeers, addrs[0].String())
-	fullNode := sw.NewNodeWithConfig(node.Full, fullCfg, fx.Replace(sw.BlockFetcher()))
+	fullNode := sw.NewNodeWithConfig(node.Full, fullCfg)
 	require.NoError(t, fullNode.Start(ctx))
 
 	addrsFull, err := peer.AddrInfoToP2pAddrs(host.InfoFromHost(fullNode.Host))

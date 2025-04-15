@@ -3,7 +3,7 @@ package core
 import (
 	"bytes"
 	"context"
-	"github.com/celestiaorg/celestia-node/internal"
+	"net"
 	"testing"
 	"time"
 
@@ -43,9 +43,6 @@ func TestCoreExchange_RequestHeaders(t *testing.T) {
 	expectedFirstHeightInRange := genHeader.Height() + 1
 	expectedLastHeightInRange := to - 1
 	expectedLenHeaders := to - expectedFirstHeightInRange
-
-	_, err = cctx.WaitForHeightWithTimeout(30, 10*time.Second)
-	require.NoError(t, err)
 
 	// request headers from height 1 to 20 [2:30)
 	headers, err := ce.GetRangeByHeight(context.Background(), genHeader, to)
@@ -92,9 +89,6 @@ func TestExchange_DoNotStoreHistoric(t *testing.T) {
 	genBlock, err := fetcher.GetBlock(ctx, genHeight)
 	require.NoError(t, err)
 	genHeader, err := ce.Get(ctx, genBlock.Header.Hash().Bytes())
-	require.NoError(t, err)
-
-	err = cctx.WaitForBlocks(30)
 	require.NoError(t, err)
 
 	headers, err := ce.GetRangeByHeight(ctx, genHeader, 30)
@@ -145,9 +139,6 @@ func TestExchange_StoreHistoricIfArchival(t *testing.T) {
 	genHeader, err := ce.Get(ctx, genBlock.Header.Hash().Bytes())
 	require.NoError(t, err)
 
-	_, err = cctx.WaitForHeight(30)
-	require.NoError(t, err)
-
 	headers, err := ce.GetRangeByHeight(ctx, genHeader, 30)
 	require.NoError(t, err)
 
@@ -180,10 +171,9 @@ func createCoreFetcher(t *testing.T, cfg *testnode.Config) (*BlockFetcher, testn
 	// flakiness with accessing account state)
 	_, err := cctx.WaitForHeightWithTimeout(2, time.Second*2) // TODO @renaynay: configure?
 	require.NoError(t, err)
-
-	client, err := internal.NewCoreConn(cfg.TmConfig.RPC.GRPCListenAddress)
+	host, port, err := net.SplitHostPort(cctx.GRPCClient.Target())
 	require.NoError(t, err)
-
+	client := newTestClient(t, host, port)
 	fetcher, err := NewBlockFetcher(client)
 	require.NoError(t, err)
 	return fetcher, cctx

@@ -51,7 +51,7 @@ func TestDaModule(t *testing.T) {
 	}
 
 	require.NoError(t, err)
-	bridge := sw.NewBridgeNode(fx.Replace(sw.BlockFetcher()))
+	bridge := sw.NewBridgeNode()
 	require.NoError(t, bridge.Start(ctx))
 
 	addrs, err := peer.AddrInfoToP2pAddrs(host.InfoFromHost(bridge.Host))
