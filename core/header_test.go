@@ -37,7 +37,7 @@ func TestMakeExtendedHeaderForEmptyBlock(t *testing.T) {
 	comm, val, err := fetcher.GetBlockInfo(ctx, height)
 	require.NoError(t, err)
 
-	eds, err := extendBlock(b.Data, b.Header.Version.App)
+	eds, err := extendBlock(b.Data)
 	require.NoError(t, err)
 
 	headerExt, err := header.MakeExtendedHeader(b.Header, comm, val, eds)

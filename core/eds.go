@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"fmt"
+	"github.com/celestiaorg/celestia-node/share"
 	coretypes "github.com/cometbft/cometbft/types"
 	"time"
 
@@ -18,15 +19,20 @@ import (
 	"github.com/celestiaorg/celestia-node/store"
 )
 
+// isEmptyBlockRef returns true if the application considers the given block data
+// empty at a given version.
+func isEmptyBlockRef(data *coretypes.Data) bool {
+	return len(data.Txs) == 0
+}
+
 // extendBlock extends the given block data, returning the resulting
 // ExtendedDataSquare (EDS). If there are no transactions in the block,
 // nil is returned in place of the eds.
-func extendBlock(data *coretypes.Data, appVersion uint64, options ...nmt.Option) (*rsmt2d.ExtendedDataSquare, error) {
+func extendBlock(data *coretypes.Data, options ...nmt.Option) (*rsmt2d.ExtendedDataSquare, error) {
 
-	// TODO(chatton): This was removed.
-	//if app.IsEmptyBlockRef(data, appVersion) {
-	//	return share.EmptyEDS(), nil
-	//}
+	if isEmptyBlockRef(data) {
+		return share.EmptyEDS(), nil
+	}
 
 	// Construct the data square from the block's transactions
 	square, err := libsquare.Construct(
