@@ -4,7 +4,6 @@ package tests
 
 import (
 	"context"
-	"go.uber.org/fx"
 	"testing"
 	"time"
 

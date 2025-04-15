@@ -14,7 +14,6 @@ import (
 
 	"github.com/celestiaorg/celestia-app/v4/pkg/appconsts"
 	libshare "github.com/celestiaorg/go-square/v2/share"
-	"go.uber.org/fx"
 
 	"github.com/celestiaorg/celestia-node/blob"
 	"github.com/celestiaorg/celestia-node/nodebuilder/da"

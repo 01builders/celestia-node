@@ -121,6 +121,7 @@ type Network struct {
 	config *testnode.Config
 	app    srvtypes.Application
 	tmNode *node.Node
+	logger sdklog.Logger
 
 	stopNode func() error
 	stopGRPC func() error
@@ -156,6 +157,7 @@ func NewNetwork(t testing.TB, config *testnode.Config) *Network {
 		config:  config,
 		app:     app,
 		tmNode:  tmNode,
+		logger:  sdklog.NewTestLogger(t),
 	}
 }
 
@@ -165,8 +167,12 @@ func (n *Network) Start() error {
 		return err
 	}
 
-	// TODO: put a real logger
-	grpcSrv, cctx, cleanupGRPC, err := testnode.StartGRPCServer(sdklog.NewNopLogger(), n.app, n.config.AppConfig, cctx)
+	coreEnv, err := n.tmNode.ConfigureRPC()
+	if err != nil {
+		return err
+	}
+
+	grpcSrv, cctx, cleanupGRPC, err := testnode.StartGRPCServer(sdklog.NewNopLogger(), n.app, n.config.AppConfig, cctx, coreEnv)
 	if err != nil {
 		return err
 	}

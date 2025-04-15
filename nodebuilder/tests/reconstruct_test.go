@@ -13,7 +13,6 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	ma "github.com/multiformats/go-multiaddr"
 	"github.com/stretchr/testify/require"
-	"go.uber.org/fx"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/celestiaorg/celestia-node/nodebuilder"
