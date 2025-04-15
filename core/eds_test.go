@@ -8,7 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/celestiaorg/celestia-app/v4/app"
 	"github.com/celestiaorg/celestia-app/v4/pkg/appconsts"
 
 	"github.com/celestiaorg/celestia-node/share"
@@ -44,8 +43,10 @@ func TestEmptySquareWithZeroTxs(t *testing.T) {
 	require.True(t, eds.Equals(share.EmptyEDS()))
 
 	// force extend the square using an empty block and compare with the min DAH
-	eds, err = app.ExtendBlock(data)
-	require.NoError(t, err)
+
+	// TODO(chatton): app.ExtendBlock removed
+	//eds, err = app.ExtendBlock(data)
+	//require.NoError(t, err)
 
 	roots, err := share.NewAxisRoots(eds)
 	require.NoError(t, err)

@@ -6,7 +6,6 @@ import (
 	coretypes "github.com/cometbft/cometbft/types"
 	"time"
 
-	"github.com/celestiaorg/celestia-app/v4/app"
 	"github.com/celestiaorg/celestia-app/v4/pkg/appconsts"
 	"github.com/celestiaorg/celestia-app/v4/pkg/wrapper"
 	libsquare "github.com/celestiaorg/go-square/v2"
@@ -15,7 +14,6 @@ import (
 	"github.com/celestiaorg/rsmt2d"
 
 	"github.com/celestiaorg/celestia-node/header"
-	"github.com/celestiaorg/celestia-node/share"
 	"github.com/celestiaorg/celestia-node/share/availability"
 	"github.com/celestiaorg/celestia-node/store"
 )
@@ -24,14 +22,16 @@ import (
 // ExtendedDataSquare (EDS). If there are no transactions in the block,
 // nil is returned in place of the eds.
 func extendBlock(data *coretypes.Data, appVersion uint64, options ...nmt.Option) (*rsmt2d.ExtendedDataSquare, error) {
-	if app.IsEmptyBlockRef(data, appVersion) {
-		return share.EmptyEDS(), nil
-	}
+
+	// TODO(chatton): This was removed.
+	//if app.IsEmptyBlockRef(data, appVersion) {
+	//	return share.EmptyEDS(), nil
+	//}
 
 	// Construct the data square from the block's transactions
 	square, err := libsquare.Construct(
 		data.Txs.ToSliceOfBytes(),
-		appconsts.DefaultSquareSizeUpperBound,
+		appconsts.SquareSizeUpperBound,
 		appconsts.SubtreeRootThreshold,
 	)
 	if err != nil {

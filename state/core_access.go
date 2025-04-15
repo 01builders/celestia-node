@@ -222,7 +222,7 @@ func (ca *CoreAccessor) SubmitPayForBlob(
 		response, err := client.SubmitPayForBlobWithAccount(ctx, accName, libBlobs, opts...)
 		// Network min gas price can be updated through governance in app
 		// If that's the case, we parse the insufficient min gas price error message and update the gas price
-		if apperrors.IsInsufficientMinGasPrice(err) {
+		if apperrors.IsInsufficientFee(err) {
 			// The error message contains enough information to parse the new min gas price
 			gasPrice, err = apperrors.ParseInsufficientMinGasPrice(err, gasPrice, gas)
 			if err != nil {
