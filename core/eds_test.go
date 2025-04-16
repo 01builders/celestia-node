@@ -42,7 +42,7 @@ func TestEmptySquareWithZeroTxs(t *testing.T) {
 
 	// force extend the square using an empty block and compare with the min DAH
 	// TODO(chatton): app.ExtendBlock was removed, can we delete?
-	//eds, err = app.ExtendBlock(data)
+	// eds, err = app.ExtendBlock(data)
 	//require.NoError(t, err)
 
 	roots, err := share.NewAxisRoots(eds)
