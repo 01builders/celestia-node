@@ -30,7 +30,6 @@ func isEmptyBlockRef(data *coretypes.Data) bool {
 // ExtendedDataSquare (EDS). If there are no transactions in the block,
 // nil is returned in place of the eds.
 func extendBlock(data *coretypes.Data, options ...nmt.Option) (*rsmt2d.ExtendedDataSquare, error) {
-
 	if isEmptyBlockRef(data) {
 		return share.EmptyEDS(), nil
 	}

@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/cometbft/cometbft/types"
-	coretypes "github.com/cometbft/cometbft/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -15,7 +14,7 @@ import (
 // txs) will be recognized as empty and return nil from `extendBlock` so that
 // we do not redundantly store empty EDSes.
 func TestTrulyEmptySquare(t *testing.T) {
-	data := coretypes.Data{
+	data := types.Data{
 		Txs:        []types.Tx{},
 		SquareSize: 1,
 	}
@@ -32,8 +31,8 @@ func TestTrulyEmptySquare(t *testing.T) {
 // square size do not allow for empty block data. However, should that ever
 // occur, we need to ensure that the correct data root is generated.
 func TestEmptySquareWithZeroTxs(t *testing.T) {
-	data := coretypes.Data{
-		Txs: []coretypes.Tx{},
+	data := types.Data{
+		Txs: []types.Tx{},
 	}
 
 	eds, err := extendBlock(&data)
@@ -43,7 +42,7 @@ func TestEmptySquareWithZeroTxs(t *testing.T) {
 	// force extend the square using an empty block and compare with the min DAH
 	// TODO(chatton): app.ExtendBlock was removed, can we delete?
 	// eds, err = app.ExtendBlock(data)
-	//require.NoError(t, err)
+	// require.NoError(t, err)
 
 	roots, err := share.NewAxisRoots(eds)
 	require.NoError(t, err)
