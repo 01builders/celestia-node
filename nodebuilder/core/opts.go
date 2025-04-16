@@ -1,8 +1,8 @@
 package core
 
 import (
-	"github.com/gogo/protobuf/grpc"
 	"go.uber.org/fx"
+	"google.golang.org/grpc"
 
 	"github.com/celestiaorg/celestia-node/header"
 	"github.com/celestiaorg/celestia-node/libs/fxutil"
