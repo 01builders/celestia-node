@@ -3,9 +3,9 @@ package core
 import (
 	"context"
 	"fmt"
-	"github.com/celestiaorg/celestia-node/share"
-	coretypes "github.com/cometbft/cometbft/types"
 	"time"
+
+	coretypes "github.com/cometbft/cometbft/types"
 
 	"github.com/celestiaorg/celestia-app/v4/pkg/appconsts"
 	"github.com/celestiaorg/celestia-app/v4/pkg/wrapper"
@@ -15,6 +15,7 @@ import (
 	"github.com/celestiaorg/rsmt2d"
 
 	"github.com/celestiaorg/celestia-node/header"
+	"github.com/celestiaorg/celestia-node/share"
 	"github.com/celestiaorg/celestia-node/share/availability"
 	"github.com/celestiaorg/celestia-node/store"
 )

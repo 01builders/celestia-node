@@ -2,14 +2,12 @@ package state
 
 import (
 	"context"
-	sdkmath "cosmossdk.io/math"
 	"errors"
 	"fmt"
-	"github.com/celestiaorg/celestia-app/v4/pkg/appconsts"
-	v2bank "github.com/cosmos/cosmos-sdk/x/bank/migrations/v2"
 	"sync"
 	"time"
 
+	sdkmath "cosmossdk.io/math"
 	storetypes "cosmossdk.io/store/types"
 	"cosmossdk.io/x/feegrant"
 	"github.com/cometbft/cometbft/crypto/merkle"
@@ -18,6 +16,7 @@ import (
 	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdktypes "github.com/cosmos/cosmos-sdk/types"
+	v2bank "github.com/cosmos/cosmos-sdk/x/bank/migrations/v2"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	logging "github.com/ipfs/go-log/v2"
@@ -26,6 +25,7 @@ import (
 	"github.com/celestiaorg/celestia-app/v4/app"
 	"github.com/celestiaorg/celestia-app/v4/app/encoding"
 	apperrors "github.com/celestiaorg/celestia-app/v4/app/errors"
+	"github.com/celestiaorg/celestia-app/v4/pkg/appconsts"
 	"github.com/celestiaorg/celestia-app/v4/pkg/user"
 	libhead "github.com/celestiaorg/go-header"
 	libshare "github.com/celestiaorg/go-square/v2/share"

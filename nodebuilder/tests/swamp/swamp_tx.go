@@ -2,11 +2,11 @@ package swamp
 
 import (
 	"context"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
 
 	"github.com/celestiaorg/celestia-app/v4/test/util/testnode"
 )
