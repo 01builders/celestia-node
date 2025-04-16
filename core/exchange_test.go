@@ -44,6 +44,9 @@ func TestCoreExchange_RequestHeaders(t *testing.T) {
 	expectedLastHeightInRange := to - 1
 	expectedLenHeaders := to - expectedFirstHeightInRange
 
+	_, err = cctx.WaitForHeightWithTimeout(30, 10*time.Second)
+	require.NoError(t, err)
+
 	// request headers from height 1 to 20 [2:30)
 	headers, err := ce.GetRangeByHeight(context.Background(), genHeader, to)
 	require.NoError(t, err)
@@ -89,6 +92,9 @@ func TestExchange_DoNotStoreHistoric(t *testing.T) {
 	genBlock, err := fetcher.GetBlock(ctx, genHeight)
 	require.NoError(t, err)
 	genHeader, err := ce.Get(ctx, genBlock.Header.Hash().Bytes())
+	require.NoError(t, err)
+
+	err = cctx.WaitForBlocks(30)
 	require.NoError(t, err)
 
 	headers, err := ce.GetRangeByHeight(ctx, genHeader, 30)
@@ -137,6 +143,9 @@ func TestExchange_StoreHistoricIfArchival(t *testing.T) {
 	genBlock, err := fetcher.GetBlock(ctx, genHeight)
 	require.NoError(t, err)
 	genHeader, err := ce.Get(ctx, genBlock.Header.Hash().Bytes())
+	require.NoError(t, err)
+
+	_, err = cctx.WaitForHeight(30)
 	require.NoError(t, err)
 
 	headers, err := ce.GetRangeByHeight(ctx, genHeader, 30)
