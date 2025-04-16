@@ -1,11 +1,10 @@
 package core
 
 import (
+	"github.com/celestiaorg/celestia-node/header"
 	"github.com/celestiaorg/celestia-node/libs/fxutil"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
-
-	"github.com/celestiaorg/celestia-node/header"
 )
 
 // WithConnection sets a custom client for core process
